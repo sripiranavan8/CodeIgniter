@@ -8,7 +8,7 @@ class Post_model extends CI_Model
     public function get_posts($slug = FALSE, $limit, $offset)
     {
         if ($limit) {
-            $this->db->limit($limit,$offset);
+            $this->db->limit($limit, $offset);
         }
         if ($slug === FALSE) {
             $this->db->order_by('posts.id', 'DESC');
@@ -34,12 +34,16 @@ class Post_model extends CI_Model
     }
     public function delete_post($id)
     {
-        $image_file_name = $this->db->select('post_image')->get_where('posts',array('id' => $id))->row()->post_image;
-        $cwd = getcwd();
-        $image_file_path = $cwd. "\\assets\\images\\posts\\";
-        chdir($image_file_path);
-        unlink($image_file_name);
-        chdir($cwd);
+        $image_file_name = $this->db->select('post_image')->get_where('posts', array('id' => $id))->row()->post_image;
+        if ($image_file_name) {
+            $cwd = getcwd();
+            $image_file_path = $cwd . "/assets/images/posts/";
+            chdir($image_file_path);
+            unlink($image_file_name);
+            chdir($cwd);
+        }
+        $this->db->where('post_id', $id);
+        $this->db->delete('comments');
         $this->db->where('id', $id);
         $this->db->delete('posts');
         return true;

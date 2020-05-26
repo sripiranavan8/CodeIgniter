@@ -11,7 +11,7 @@
             <p><a class="btn btn-info" href="<?php echo site_url('/posts/' . $post['slug']); ?>">Read More</a></p>
         </div>
     </div>
-<? endforeach; ?>
+<?php endforeach; ?>
 <div class='pagination-link'>
     <?php
     echo $this->pagination->create_links();

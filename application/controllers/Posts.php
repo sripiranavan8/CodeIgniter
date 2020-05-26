@@ -19,7 +19,7 @@ class Posts extends CI_Controller
     }
     public function view($slug = NULL)
     {
-        $data['post'] = $this->Post_model->get_posts($slug);
+        $data['post'] = $this->Post_model->get_posts($slug, null, null);
         $post_id = $data['post']['id'];
         $data['comments'] = $this->Comment_model->get_comments($post_id);
         if (empty($data['post'])) {
@@ -46,8 +46,10 @@ class Posts extends CI_Controller
             $this->load->view('templates/footer');
         } else {
             // Upload Image
+            $new_name = uniqid() . $_FILES["userfiles"]['name'];
+            $config['file_name'] = $new_name;
             $config['upload_path'] = './assets/images/posts';
-            $config['allowed_types'] = 'gif|jpg|png';
+            $config['allowed_types'] = 'gif|jpg|png|jpeg';
             $config['max_size'] = '4096';
             $config['max_with'] = '1024';
             $config['max_height'] = '1024';
@@ -60,7 +62,7 @@ class Posts extends CI_Controller
                 $post_image = 'noimage.png';
             } else {
                 $data = array('upload_data' => $this->upload->data());
-                $post_image = $_FILES['userfile']['name'];
+                $post_image =  $data['upload_data']['file_name'];
             }
 
             $this->Post_model->create_post($post_image);
@@ -82,7 +84,7 @@ class Posts extends CI_Controller
         if (!$this->session->userdata('logged_in')) {
             redirect('users/login');
         }
-        $data['post'] = $this->Post_model->get_posts($slug);
+        $data['post'] = $this->Post_model->get_posts($slug, 1, 0);
         if ($this->session->userdata('user_id') != $data['post']['user_id']) {
             redirect('posts');
         }
